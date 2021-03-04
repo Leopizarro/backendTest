@@ -39,10 +39,13 @@ app.get('/profile/:id', (req, res) => {
 })
 
 app.post('/signin', (req, res) =>{
+    if(!req.body.email || !req.body.password){
+        return res.status(400).json('Porfavor ingresar credenciales')
+    }
     db.select('email', 'hash').from('login')
         .where('email', '=', req.body.email)
         .then(data => {
-            const isValid = bcrypt.compare(req.body.password, data[0].hash);
+            const isValid = bcrypt.compareSync(req.body.password, data[0].hash);
             if(isValid){
                 return db.select('*').from('users')
                     .where('email', '=', req.body.email)
@@ -85,7 +88,7 @@ app.post('/register', (req, res) =>{
             .then(trx.commit)
             .catch(trx.rollback)
             })
-    .catch(err => res.status(400).json('No se pudo registrar usuario, intente neuvamente'))
+    .catch(err => res.status(400).json('No se pudo registrar usuario, intente nuevamente'))
 })
 
 app.listen(3002, () => {
