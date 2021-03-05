@@ -1,5 +1,8 @@
 const handleRegister = (req, res, db, bcrypt) =>{
     const {nombre, apellido, username, email, password, comuna, direccion} = req.body;
+    if(!nombre || !apellido || !username || !email || !password || !comuna || !direccion){
+        return res.status(400).json('Porfavor ingresar información en todos los campos')
+    }
     const hash = bcrypt.hashSync(password, 10);
         db.transaction(trx => {
             trx.insert({
